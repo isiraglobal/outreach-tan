@@ -1,0 +1,8 @@
+{
+  "name": "outreach-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "npm --prefix frontend install && npm run build --prefix frontend"
+  }
+}
