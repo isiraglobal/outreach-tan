@@ -130,7 +130,7 @@ button, a, input, select, textarea {
 }
 
 .mobile-only {
-  display: none;
+  display: none !important;
 }
 
 .main-content-area {
@@ -142,7 +142,8 @@ button, a, input, select, textarea {
 
 @media (max-width: 768px) {
   .desktop-sidebar { display: none !important; }
-  .mobile-only { display: block !important; }
+  .mobile-only { display: flex !important; }
+  .mobile-backdrop.mobile-only { display: block !important; }
   .main-content-area { margin-left: 0 !important; padding-top: 54px !important; }
   .page-content-inner { padding: 20px 16px !important; }
 }

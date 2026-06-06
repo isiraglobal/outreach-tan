@@ -110,7 +110,7 @@ export default function Layout({ children }) {
         <div
           onClick={() => setMobileOpen(false)}
           style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", backdropFilter: "blur(3px)", zIndex: 48 }}
-          className="mobile-only"
+          className="mobile-backdrop mobile-only"
         />
       )}
 
