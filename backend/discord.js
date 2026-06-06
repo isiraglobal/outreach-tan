@@ -65,7 +65,7 @@ async function sendDiscordAlert(reply) {
         { name: '📝 Subject', value: subject, inline: true },
         { 
           name: '⚡ Quick Actions', 
-          value: `👉 **[Reply directly via Email](${mailtoUrl})**\n👉 **[Open Outreach Dashboard](http://localhost:3000/replies)**` 
+          value: `👉 **[Reply directly via Email](${mailtoUrl})**\n👉 **[View in Outreach Dashboard](https://outreach-tan-theta.vercel.app/replies)**` 
         }
       ],
       timestamp: new Date().toISOString()

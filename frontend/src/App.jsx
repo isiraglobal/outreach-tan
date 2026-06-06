@@ -360,6 +360,40 @@ if (isMockMode) {
         }
       }
 
+      // Testing page endpoints (all mocked for demo mode)
+      else if (url === '/api/cron/send-test-email' && method === 'post') {
+        const body = JSON.parse(cfg.data || '{}');
+        // In mock mode, we simulate the email was sent
+        data = { success: true, message: `Test email simulated to ${body.to} (mock mode — no real email sent)` };
+      }
+
+      else if (url === '/api/cron/poll') {
+        data = { success: true, message: 'IMAP inbox reply poll simulated (mock mode).' };
+      }
+
+      else if (url === '/api/cron/send') {
+        data = { success: true, message: 'Mailer queue processing triggered in background (mock mode).' };
+      }
+
+      else if (url === '/api/cron/sync-sheets') {
+        data = { success: true, result: { count: 0 }, message: 'Google Sheets sync simulated (mock mode).' };
+      }
+
+      else if (url === '/api/cron/trigger-all') {
+        data = {
+          success: true,
+          message: 'Full workflow triggered (mock mode)',
+          steps: [
+            '1. Starting Google Sheet Sync...',
+            '   Google Sheet sync completed. Added 0 leads.',
+            '2. Triggering Mailer Queue processing...',
+            '   Mailer sender loop started asynchronously.',
+            '3. Running IMAP Inbox reply poll...',
+            '   IMAP Inbox reply check completed.'
+          ]
+        };
+      }
+
       return {
         data,
         status: 200,
@@ -380,6 +414,7 @@ import Campaigns from './pages/Campaigns';
 import SentLog from './pages/SentLog';
 import Replies from './pages/Replies';
 import Settings from './pages/Settings';
+import Testing from './pages/Testing';
 
 export default function App() {
   return (
@@ -396,6 +431,7 @@ export default function App() {
             <Route path="/sent" element={<SentLog />} />
             <Route path="/replies" element={<Replies />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/testing" element={<Testing />} />
 
             {/* Catch-all redirects back to dashboard */}
             <Route path="*" element={<Navigate to="/" replace />} />

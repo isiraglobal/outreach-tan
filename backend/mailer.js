@@ -148,11 +148,38 @@ async function runCampaignSender() {
       let subject = campaign.subject || '';
       let body = campaign.body_template || '';
 
-      subject = subject.replace(/\{\{name\}\}/gi, leadName).replace(/\{\{company\}\}/gi, leadCompany);
-      body = body.replace(/\{\{name\}\}/gi, leadName).replace(/\{\{company\}\}/gi, leadCompany);
+      // Template interpolation
+      subject = subject
+        .replace(/\{\{name\}\}/gi, leadName)
+        .replace(/\{\{company\}\}/gi, leadCompany)
+        .replace(/\{\{email\}\}/gi, lead.email || '');
+      body = body
+        .replace(/\{\{name\}\}/gi, leadName)
+        .replace(/\{\{company\}\}/gi, leadCompany)
+        .replace(/\{\{email\}\}/gi, lead.email || '');
 
-      // Append plain-text unsubscribe footer
-      body += `\n\n---\nTo stop receiving emails, reply with STOP.`;
+      // Auto-detect HTML vs plain-text template
+      const isHtml = /<[a-z][\s\S]*>/i.test(body);
+
+      let htmlBody, textBody;
+      if (isHtml) {
+        // HTML email: append styled unsubscribe footer
+        htmlBody = body + `
+          <br/><br/>
+          <hr style="border:none;border-top:1px solid #eee;margin:20px 0"/>
+          <p style="font-size:11px;color:#aaa;text-align:center">
+            You are receiving this because you are in our outreach list.<br/>
+            To unsubscribe, reply with STOP in the subject line.
+          </p>
+        `;
+        // Plain-text fallback: strip HTML tags
+        textBody = body.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim() +
+          '\n\n---\nTo unsubscribe, reply STOP.';
+      } else {
+        // Plain text email: append simple footer
+        textBody = body + '\n\n---\nTo stop receiving emails, reply with STOP.';
+        htmlBody = null;
+      }
 
       // 6. Attempt email sending via Nodemailer
       let transporter;
@@ -165,15 +192,18 @@ async function runCampaignSender() {
       }
 
       const senderEmail = getSetting('GMAIL_USER');
-      console.log(`[Mailer Info] Sending email to ${lead.email} for campaign '${campaign.name}'...`);
+      console.log(`[Mailer Info] Sending ${isHtml ? 'HTML' : 'plain text'} email to ${lead.email} for campaign '${campaign.name}'...`);
 
       try {
-        const info = await transporter.sendMail({
+        const mailOptions = {
           from: `"Outreach" <${senderEmail}>`,
           to: lead.email,
           subject: subject,
-          text: body
-        });
+          text: textBody
+        };
+        if (htmlBody) mailOptions.html = htmlBody;
+
+        const info = await transporter.sendMail(mailOptions);
 
         console.log(`[Mailer Info] Email sent successfully to ${lead.email}. Message ID: ${info.messageId}`);
 

@@ -9,7 +9,8 @@ import {
   Settings,
   Menu,
   X,
-  Zap
+  Zap,
+  FlaskConical
 } from "lucide-react";
 
 const navItems = [
@@ -18,6 +19,7 @@ const navItems = [
   { name: "Campaigns",  path: "/campaigns",  Icon: Target },
   { name: "Sent Log",   path: "/sent",       Icon: Send },
   { name: "Replies",    path: "/replies",    Icon: MessageSquare },
+  { name: "Testing",    path: "/testing",    Icon: FlaskConical },
   { name: "Settings",   path: "/settings",   Icon: Settings },
 ];
 

@@ -1,17 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import {
-  TrendingUp,
-  Users,
-  Mail,
-  Target,
-  Flame,
-  ArrowRight,
-  MessageSquare,
-  AlertCircle,
-  Clock
+  TrendingUp, Users, Mail, Target, Flame, ArrowRight, MessageSquare, AlertCircle, Clock, FlaskConical
 } from 'lucide-react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import axios from 'axios';
@@ -187,7 +180,7 @@ export default function Dashboard() {
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {recentReplies.map(reply => (
-                  <a href="/replies" key={reply.id} style={{ display: 'block', textDecoration: 'none' }}>
+                  <Link to="/replies" key={reply.id} style={{ display: 'block', textDecoration: 'none' }}>
                     <div style={{
                       padding: '11px 14px',
                       background: 'var(--color-bg)',
@@ -214,7 +207,7 @@ export default function Dashboard() {
                         "{reply.snippet}"
                       </p>
                     </div>
-                  </a>
+                  </Link>
                 ))}
               </div>
             )}
@@ -228,12 +221,13 @@ export default function Dashboard() {
           Quick Actions
         </h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
-          {[
-            { title: "Configure Campaign", href: "/campaigns", description: "Create or edit email templates, delays & limits", color: 'rgba(139,158,110,0.1)', iconColor: 'var(--color-accent)' },
-            { title: "Import Leads", href: "/leads", description: "Upload CSV or sync from Google Sheets", color: 'rgba(61,127,193,0.1)', iconColor: '#3D7FC1' },
-            { title: "App Settings", href: "/settings", description: "Gmail, Discord webhooks & database tools", color: 'rgba(180,146,78,0.1)', iconColor: 'var(--color-gold)' }
-          ].map(({ title, href, description, color, iconColor }) => (
-            <a key={href} href={href} style={{ display: 'block', textDecoration: 'none' }}>
+        {[
+            { title: "Campaigns", href: "/campaigns", description: "Create HTML templates, set delays & limits", iconColor: 'var(--color-accent)' },
+            { title: "Import Leads", href: "/leads", description: "Upload CSV or sync from Google Sheets", iconColor: '#3D7FC1' },
+            { title: "Test & Debug", href: "/testing", description: "Test Discord, email, inbox poll & triggers", iconColor: '#8B5CF6' },
+            { title: "Settings", href: "/settings", description: "Gmail credentials, Discord webhook & more", iconColor: 'var(--color-gold)' }
+          ].map(({ title, href, description, iconColor }) => (
+            <Link key={href} to={href} style={{ display: 'block', textDecoration: 'none' }}>
               <div
                 className="card"
                 style={{ padding: '18px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, cursor: 'pointer', transition: 'all 0.2s ease' }}
@@ -246,7 +240,7 @@ export default function Dashboard() {
                 </div>
                 <ArrowRight size={16} color={iconColor} />
               </div>
-            </a>
+            </Link>
           ))}
         </div>
       </div>
