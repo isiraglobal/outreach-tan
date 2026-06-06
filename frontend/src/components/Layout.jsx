@@ -13,6 +13,8 @@ import {
   FlaskConical
 } from "lucide-react";
 
+import axios from "axios";
+
 const navItems = [
   { name: "Dashboard",  path: "/",          Icon: LayoutDashboard },
   { name: "Leads",      path: "/leads",      Icon: Users },
@@ -82,15 +84,39 @@ const logoArea = (
   </div>
 );
 
-const statusFooter = (
-  <div style={{ padding: "12px 16px", borderTop: "1px solid var(--color-border)", fontSize: 11, color: "var(--color-text-muted)" }}>
-    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-      <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#3D9C6E", boxShadow: "0 0 0 2px rgba(61,156,110,0.2)", animation: "pulse 2s ease-in-out infinite" }} />
-      <span style={{ fontWeight: 500 }}>Backend Connected</span>
+function StatusFooter() {
+  const [connected, setConnected] = useState(false);
+
+  useEffect(() => {
+    const checkConnection = () => {
+      axios.get("/api/stats")
+        .then(() => setConnected(true))
+        .catch(() => setConnected(false));
+    };
+    checkConnection();
+    const interval = setInterval(checkConnection, 15000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div style={{ padding: "12px 16px", borderTop: "1px solid var(--color-border)", fontSize: 11, color: "var(--color-text-muted)" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+        <div style={{
+          width: 7,
+          height: 7,
+          borderRadius: "50%",
+          background: connected ? "#3D9C6E" : "#E05252",
+          boxShadow: connected ? "0 0 0 2px rgba(61,156,110,0.2)" : "0 0 0 2px rgba(224,82,82,0.2)",
+          animation: "pulse 2s ease-in-out infinite"
+        }} />
+        <span style={{ fontWeight: 500, color: connected ? "var(--color-text-primary)" : "var(--color-text-muted)" }}>
+          {connected ? "Backend Connected" : "Backend Offline"}
+        </span>
+      </div>
+      <p style={{ margin: "3px 0 0", fontSize: 10, color: "var(--color-text-muted)" }}>Sends: 10 AM – 4 PM EST only</p>
     </div>
-    <p style={{ margin: "3px 0 0", fontSize: 10, color: "var(--color-text-muted)" }}>Sends: 10 AM – 4 PM EST only</p>
-  </div>
-);
+  );
+}
 
 export default function Layout({ children }) {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -102,7 +128,7 @@ export default function Layout({ children }) {
       <aside className="desktop-sidebar" style={{ ...sidebarStyles, position: "fixed", top: 0, left: 0, bottom: 0, width: 240, zIndex: 40 }}>
         {logoArea}
         <NavLinks location={location} onItemClick={null} />
-        {statusFooter}
+        <StatusFooter />
       </aside>
 
       {/* Mobile overlay backdrop */}
@@ -136,7 +162,7 @@ export default function Layout({ children }) {
         </div>
         {logoArea}
         <NavLinks location={location} onItemClick={() => setMobileOpen(false)} />
-        {statusFooter}
+        <StatusFooter />
       </aside>
 
       {/* Mobile Top Header */}
