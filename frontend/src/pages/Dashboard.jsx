@@ -53,6 +53,9 @@ export default function Dashboard() {
   }
 
   if (error) {
+    const apiURL = axios.defaults.baseURL || 'http://localhost:3001';
+    const isLocal = apiURL.includes('localhost') || apiURL.includes('127.0.0.1');
+
     return (
       <div style={{ maxWidth: 480, margin: '80px auto', textAlign: 'center', padding: '0 20px' }}>
         <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(224,82,82,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
@@ -60,7 +63,11 @@ export default function Dashboard() {
         </div>
         <h2 style={{ fontSize: 20, fontWeight: 700, color: 'var(--color-text-primary)', margin: '0 0 8px' }}>Backend Not Connected</h2>
         <p style={{ fontSize: 13, color: 'var(--color-text-secondary)', margin: '0 0 20px' }}>{error}</p>
-        <p style={{ fontSize: 12, color: 'var(--color-text-muted)', marginBottom: 20 }}>Make sure the Express backend is running on port 3001.</p>
+        <p style={{ fontSize: 12, color: 'var(--color-text-muted)', marginBottom: 20 }}>
+          {isLocal 
+            ? "Make sure your local Express backend is running (e.g., npm start inside /backend on port 3001)."
+            : `Attempted to connect to your online backend at: ${apiURL}. Please verify it is running and accessible.`}
+        </p>
         <Button onClick={() => window.location.reload()}>Retry Connection</Button>
       </div>
     );
