@@ -25,9 +25,14 @@ if (!BUCKET_NAME || !ENDPOINT || !ACCESS_KEY_ID || !SECRET_ACCESS_KEY) {
   process.exit(1);
 }
 
+let endpoint = ENDPOINT;
+if (!endpoint.startsWith('http://') && !endpoint.startsWith('https://')) {
+  endpoint = 'https://' + endpoint;
+}
+
 const client = new S3Client({
   region: 'auto',
-  endpoint: ENDPOINT,
+  endpoint: endpoint,
   credentials: {
     accessKeyId: ACCESS_KEY_ID,
     secretAccessKey: SECRET_ACCESS_KEY,

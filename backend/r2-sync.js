@@ -10,9 +10,13 @@ let r2Client = null;
 
 // Initialize R2 client if environment variables are set
 if (process.env.R2_ENDPOINT && process.env.R2_ACCESS_KEY_ID && process.env.R2_SECRET_ACCESS_KEY) {
+  let endpoint = process.env.R2_ENDPOINT;
+  if (!endpoint.startsWith('http://') && !endpoint.startsWith('https://')) {
+    endpoint = 'https://' + endpoint;
+  }
   r2Client = new S3Client({
     region: 'auto',
-    endpoint: process.env.R2_ENDPOINT,
+    endpoint: endpoint,
     credentials: {
       accessKeyId: process.env.R2_ACCESS_KEY_ID,
       secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
