@@ -113,7 +113,31 @@ function StatusFooter() {
           {connected ? "Backend Connected" : "Backend Offline"}
         </span>
       </div>
-      <p style={{ margin: "3px 0 0", fontSize: 10, color: "var(--color-text-muted)" }}>Sends: 10 AM – 4 PM EST only</p>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 6, marginTop: 4 }}>
+        <p style={{ margin: 0, fontSize: 10, color: "var(--color-text-muted)" }}>Sends: 10 AM – 4 PM EST only</p>
+        <button
+          onClick={() => {
+            sessionStorage.removeItem('site_authenticated');
+            window.location.reload();
+          }}
+          style={{
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            fontSize: 9.5,
+            fontWeight: 600,
+            color: "var(--color-text-muted)",
+            padding: "1px 5px",
+            borderRadius: 4,
+            border: "1px solid var(--color-border)",
+            whiteSpace: "nowrap"
+          }}
+          onMouseEnter={e => { e.currentTarget.style.color = "var(--color-text-primary)"; e.currentTarget.style.borderColor = "var(--color-border-strong)"; }}
+          onMouseLeave={e => { e.currentTarget.style.color = "var(--color-text-muted)"; e.currentTarget.style.borderColor = "var(--color-border)"; }}
+        >
+          🔒 Lock App
+        </button>
+      </div>
     </div>
   );
 }

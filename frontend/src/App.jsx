@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import axios from 'axios';
 
 // Configure Axios backend connection base URL
-axios.defaults.baseURL = import.meta.env.VITE_API_URL || '';
+axios.defaults.baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 // --- SITE PASSWORD LOCK GATE ---
 // Uses environment variable VITE_SITE_PASSWORD to lock access to the entire UI.
