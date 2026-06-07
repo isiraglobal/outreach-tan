@@ -3,7 +3,9 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import axios from 'axios';
 
 // Configure Axios backend connection base URL
-axios.defaults.baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const savedBaseURL = typeof window !== 'undefined' ? localStorage.getItem('backend_url') : null;
+const isProduction = typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+axios.defaults.baseURL = savedBaseURL || import.meta.env.VITE_API_URL || (isProduction ? 'https://outreach-backend.onrender.com' : 'http://localhost:3001');
 
 // --- SITE PASSWORD LOCK GATE ---
 // Uses environment variable VITE_SITE_PASSWORD to lock access to the entire UI.

@@ -114,7 +114,36 @@ function StatusFooter() {
         </span>
       </div>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 6, marginTop: 4 }}>
-        <p style={{ margin: 0, fontSize: 10, color: "var(--color-text-muted)" }}>Sends: 10 AM – 4 PM EST only</p>
+        <button
+          onClick={() => {
+            const newURL = prompt("Enter Backend Server URL:", axios.defaults.baseURL);
+            if (newURL !== null) {
+              let formattedURL = newURL.trim();
+              if (formattedURL && !formattedURL.startsWith('http://') && !formattedURL.startsWith('https://')) {
+                formattedURL = 'https://' + formattedURL;
+              }
+              localStorage.setItem('backend_url', formattedURL);
+              axios.defaults.baseURL = formattedURL;
+              window.location.reload();
+            }
+          }}
+          style={{
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            fontSize: 9.5,
+            fontWeight: 600,
+            color: "var(--color-text-muted)",
+            padding: "1px 5px",
+            borderRadius: 4,
+            border: "1px solid var(--color-border)",
+            whiteSpace: "nowrap"
+          }}
+          onMouseEnter={e => { e.currentTarget.style.color = "var(--color-text-primary)"; e.currentTarget.style.borderColor = "var(--color-border-strong)"; }}
+          onMouseLeave={e => { e.currentTarget.style.color = "var(--color-text-muted)"; e.currentTarget.style.borderColor = "var(--color-border)"; }}
+        >
+          ⚙️ API URL
+        </button>
         <button
           onClick={() => {
             sessionStorage.removeItem('site_authenticated');

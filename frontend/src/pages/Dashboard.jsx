@@ -25,6 +25,82 @@ function StatCard({ label, value, Icon, iconBg, iconColor }) {
   );
 }
 
+function ConnectionErrorScreen({ error, apiURL }) {
+  const isLocal = apiURL.includes('localhost') || apiURL.includes('127.0.0.1');
+  const [customURL, setCustomURL] = useState(apiURL);
+
+  const handleSaveURL = (e) => {
+    e.preventDefault();
+    let formattedURL = customURL.trim();
+    if (formattedURL && !formattedURL.startsWith('http://') && !formattedURL.startsWith('https://')) {
+      formattedURL = 'https://' + formattedURL;
+    }
+    localStorage.setItem('backend_url', formattedURL);
+    axios.defaults.baseURL = formattedURL;
+    window.location.reload();
+  };
+
+  return (
+    <div style={{ maxWidth: 480, margin: '60px auto', textAlign: 'center', padding: '0 20px' }}>
+      <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(224,82,82,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+        <AlertCircle size={28} color="#E05252" />
+      </div>
+      <h2 style={{ fontSize: 20, fontWeight: 700, color: 'var(--color-text-primary)', margin: '0 0 8px' }}>Backend Not Connected</h2>
+      <p style={{ fontSize: 13, color: 'var(--color-text-secondary)', margin: '0 0 20px' }}>{error}</p>
+      
+      <div style={{
+        background: 'var(--color-surface)',
+        border: '1px solid var(--color-border)',
+        borderRadius: 12,
+        padding: 20,
+        marginBottom: 20,
+        textAlign: 'left'
+      }}>
+        <p style={{ margin: '0 0 12px', fontSize: 12, color: 'var(--color-text-secondary)', lineHeight: 1.5 }}>
+          {isLocal 
+            ? "Your frontend is configured to connect to a local backend. If your backend is hosted online, enter its URL below to connect."
+            : `Attempted to connect to: ${apiURL}`}
+        </p>
+        <form onSubmit={handleSaveURL} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div>
+            <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-text-muted)', display: 'block', marginBottom: 4 }}>
+              Backend Server URL
+            </label>
+            <input
+              type="text"
+              value={customURL}
+              onChange={e => setCustomURL(e.target.value)}
+              placeholder="e.g. https://your-backend.onrender.com"
+              style={{
+                width: '100%',
+                height: 38,
+                padding: '0 12px',
+                border: '1px solid var(--color-border-strong)',
+                borderRadius: 8,
+                background: 'var(--color-bg)',
+                color: 'var(--color-text-primary)',
+                fontSize: 13,
+                outline: 'none',
+                boxSizing: 'border-box'
+              }}
+            />
+          </div>
+          <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
+            <Button type="submit" style={{ flex: 1 }}>Save & Connect</Button>
+            <Button type="button" variant="outline" onClick={() => window.location.reload()} style={{ flex: 1 }}>
+              Retry
+            </Button>
+          </div>
+        </form>
+      </div>
+      
+      <p style={{ fontSize: 11.5, color: 'var(--color-text-muted)' }}>
+        Make sure your local or remote Express backend is running and CORS is enabled.
+      </p>
+    </div>
+  );
+}
+
 export default function Dashboard() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -54,23 +130,7 @@ export default function Dashboard() {
 
   if (error) {
     const apiURL = axios.defaults.baseURL || 'http://localhost:3001';
-    const isLocal = apiURL.includes('localhost') || apiURL.includes('127.0.0.1');
-
-    return (
-      <div style={{ maxWidth: 480, margin: '80px auto', textAlign: 'center', padding: '0 20px' }}>
-        <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(224,82,82,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-          <AlertCircle size={28} color="#E05252" />
-        </div>
-        <h2 style={{ fontSize: 20, fontWeight: 700, color: 'var(--color-text-primary)', margin: '0 0 8px' }}>Backend Not Connected</h2>
-        <p style={{ fontSize: 13, color: 'var(--color-text-secondary)', margin: '0 0 20px' }}>{error}</p>
-        <p style={{ fontSize: 12, color: 'var(--color-text-muted)', marginBottom: 20 }}>
-          {isLocal 
-            ? "Make sure your local Express backend is running (e.g., npm start inside /backend on port 3001)."
-            : `Attempted to connect to your online backend at: ${apiURL}. Please verify it is running and accessible.`}
-        </p>
-        <Button onClick={() => window.location.reload()}>Retry Connection</Button>
-      </div>
-    );
+    return <ConnectionErrorScreen error={error} apiURL={apiURL} />;
   }
 
   const { totalLeads, activeCampaigns, emailsSent, responseRate, warmupActive, recentReplies, chartData } = stats;

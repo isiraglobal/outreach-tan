@@ -85,6 +85,40 @@ db.prepare(`
   )
 `).run();
 
+// Seed sample campaign and lead if database is empty
+const campaignCount = db.prepare('SELECT COUNT(*) as count FROM campaigns').get().count;
+if (campaignCount === 0) {
+  console.log('🌱 Database is empty. Seeding sample campaign and leads...');
+  
+  // 1. Seed sample campaign
+  db.prepare(`
+    INSERT INTO campaigns (name, subject, body_template, status, delay_min, delay_max, daily_limit)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    'Sample Outreach Campaign',
+    'Hey {{name}} - Quick question',
+    'Hey {{name}},\n\nI noticed you work at {{company}}. I wanted to reach out and ask if you\'d be open to a quick chat next week?\n\nBest,\nSender',
+    'draft',
+    10,
+    30,
+    50
+  );
+
+  // 2. Seed sample lead (isiraglobal@gmail.com)
+  db.prepare(`
+    INSERT OR IGNORE INTO leads (email, name, company, source, status)
+    VALUES (?, ?, ?, ?, ?)
+  `).run(
+    'isiraglobal@gmail.com',
+    'Isira',
+    'Isira Global',
+    'manual',
+    'pending'
+  );
+  
+  console.log('✅ Database seeding complete.');
+}
+
 console.log('SQLite database initialized successfully at', dbPath);
 
 module.exports = db;
